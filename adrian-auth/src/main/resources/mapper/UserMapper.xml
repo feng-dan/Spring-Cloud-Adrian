@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kim.adrian.auth.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.adrian.common.entity.po.system.SystemUser">
+        <!--@mbg.generated-->
+        <!--@Table t_user-->
+        <id column="USER_ID" jdbcType="BIGINT" property="userId"/>
+        <result column="USERNAME" jdbcType="VARCHAR" property="username"/>
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+        <result column="DEPT_ID" jdbcType="BIGINT" property="deptId"/>
+        <result column="EMAIL" jdbcType="VARCHAR" property="email"/>
+        <result column="MOBILE" jdbcType="VARCHAR" property="mobile"/>
+        <result column="STATUS" jdbcType="CHAR" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="LAST_LOGIN_TIME" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="SSEX" jdbcType="CHAR" property="ssex"/>
+        <result column="AVATAR" jdbcType="VARCHAR" property="avatar"/>
+        <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        USER_ID, USERNAME, `PASSWORD`, DEPT_ID, EMAIL, MOBILE, `STATUS`, CREATE_TIME, MODIFY_TIME,
+        LAST_LOGIN_TIME, SSEX, AVATAR, DESCRIPTION
+    </sql>
+
+    <select id="findByName" parameterType="string" resultType="systemUser">
+        SELECT u.user_id                 userId,
+               u.username,
+               u.email,
+               u.mobile,
+               u.password,
+               u.status,
+               u.create_time             createTime,
+               u.ssex                    sex,
+               u.dept_id                 deptId,
+               u.last_login_time         lastLoginTime,
+               u.modify_time             modifyTime,
+               u.description,
+               u.avatar,
+               d.dept_name               deptName,
+               GROUP_CONCAT(r.role_id)   roleId,
+               GROUP_CONCAT(r.ROLE_NAME) roleName
+        FROM t_user u
+                 LEFT JOIN t_dept d ON (u.dept_id = d.dept_id)
+                 LEFT JOIN t_user_role ur ON (u.user_id = ur.user_id)
+                 LEFT JOIN t_role r ON r.role_id = ur.role_id
+        WHERE u.username = #{username}
+        group by u.username, u.user_id, u.email, u.mobile, u.password, u.status, u.create_time, u.ssex, u.dept_id
+               , u.last_login_time, u.modify_time, u.description, u.avatar
+    </select>
+</mapper>
